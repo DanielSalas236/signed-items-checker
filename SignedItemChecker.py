@@ -45,4 +45,4 @@ def sendDiscordMessage(URL):
 while True:
     findWord("https://store.taylorswift.com/", "signed")
     findWordClass("https://shop.arianagrande.com/", "signed", "product-container clearfix", "product-details")
-    time.sleep(30)
+    time.sleep(1800)
