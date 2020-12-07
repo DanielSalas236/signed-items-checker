@@ -17,7 +17,7 @@ def findWord(URL, palabra):
     # print (f'Found the word "{palabra}" {cantidad} times\n')
     print("Sign encontrado: " + str(cantidad) + " veces en " + URL)
     if cantidad > 0:
-        sendDiscordMessage(URL)
+        sendDiscordMessage(URL, ' con stock')
 
 def findWordClass(URL, palabra, clase, clase2):
     page = requests.get(URL, headers=headers)
@@ -25,21 +25,23 @@ def findWordClass(URL, palabra, clase, clase2):
 
     producto = soup.find(attrs={"class": clase})
     
-    cantidad = len(producto)
+    cantidad = 0
 
     for unidad in producto.find_all(attrs={"class": clase2}):
         titulo = unidad.get_text().lower()
-        if titulo.find(palabra) != -1 and titulo.find("sold out") == -1:
-            print("Stock")
-            sendDiscordMessage(URL)
-        else:
-            print("Sin stock")
-            sendDiscordMessage(URL)
-    print("Sign encontrado: " + str(cantidad) + " veces en " + URL)
+        if titulo.find(palabra) != -1:
+            if titulo.find("sold out") == -1:
+                print("Stock")
+                cantidad = cantidad + 1
+                sendDiscordMessage(URL, ' con stock')
+            else:
+                print("Sin stock")
+                sendDiscordMessage(URL, ' sin stock')
+        print("Sign encontrado: " + str(cantidad) + " veces en " + URL)
 
-def sendDiscordMessage(URL):
+def sendDiscordMessage(URL, stock):
     webhook = Webhook.from_url("https://discord.com/api/webhooks/781566770661818368/iUP2KNJ6DUpcgejKL9XbLQb5Ums4YA2AV0COGSIAkiLhYXzIrSeID8AaQcHCZwbX-JvU", adapter=RequestsWebhookAdapter())
-    webhook.send(f"@everyone Artículo firmado publicado en {URL}")
+    webhook.send(f"@everyone Artículo firmado publicado en {URL} {stock}")
     print("Mensaje enviado")
 
 while True:
